@@ -5,54 +5,41 @@ const {
   updateContactService,
   deleteContactService,
 } = require("../services/contactsServices");
+const { catchAsyncWrapper } = require("../utils/catchAsyncWrapper");
 
-const getContacts = async (req, res, next) => {
-  try {
-    const contacts = await getContactsService();
-    res.status(200).json(contacts);
-  } catch (err) {
-    next(err);
-  }
-};
+const getContacts = catchAsyncWrapper(async (req, res, next) => {
+  const contacts = await getContactsService();
+  res.status(200).json(contacts);
+});
 
-const getContact = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const contact = await getContactService(contactId);
-    res.status(200).json(contact);
-  } catch (err) {
-    next(err);
-  }
-};
+const getContact = catchAsyncWrapper(async (req, res, next) => {
+  const { contactId } = req.params;
+  const contact = await getContactService(contactId);
+  res.status(200).json(contact);
+});
 
-const createContact = async (req, res, next) => {
-  try {
-    const newContact = await createContactService(req.body);
-    res.status(201).json(newContact);
-  } catch (err) {
-    next(err);
-  }
-};
+const createContact = catchAsyncWrapper(async (req, res, next) => {
+  const newContact = await createContactService(req.body);
+  res.status(201).json(newContact);
+});
 
-const updateContact = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const updatedContact = await updateContactService(contactId, req.body);
-    res.status(200).json(updatedContact);
-  } catch (err) {
-    next(err);
-  }
-};
+const updateContact = catchAsyncWrapper(async (req, res, next) => {
+  const { contactId } = req.params;
+  const updatedContact = await updateContactService(contactId, req.body);
+  res.status(200).json(updatedContact);
+});
 
-const deleteContact = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const deletedContact = await deleteContactService(contactId);
-    res.status(200).json(deletedContact);
-  } catch (err) {
-    next(err);
-  }
-};
+const deleteContact = catchAsyncWrapper(async (req, res, next) => {
+  const { contactId } = req.params;
+  const deletedContact = await deleteContactService(contactId);
+  res.status(200).json(deletedContact);
+});
+
+const updateStatusContact = catchAsyncWrapper(async (req, res) => {
+  const { contactId } = req.params;
+  const updatedContact = await updateContactService(contactId, req.body);
+  res.status(200).json(updatedContact);
+});
 
 module.exports = {
   getContacts,
@@ -60,4 +47,5 @@ module.exports = {
   createContact,
   updateContact,
   deleteContact,
+  updateStatusContact,
 };
