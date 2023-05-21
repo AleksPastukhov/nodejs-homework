@@ -8,7 +8,8 @@ const {
 const { catchAsyncWrapper } = require("../utils/catchAsyncWrapper");
 
 const getContacts = catchAsyncWrapper(async (req, res, next) => {
-  const contacts = await getContactsService();
+  const { page = 1, limit = 10, favorite } = req.query;
+  const contacts = await getContactsService(page, limit, favorite);
   res.status(200).json(contacts);
 });
 
