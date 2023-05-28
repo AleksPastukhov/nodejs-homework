@@ -1,3 +1,7 @@
+const { HttpError } = require("../HttpError");
+const { SECRET_KEY } = process.env;
+const jwt = require("jsonwebtoken");
+const { User } = require("../../models/User");
 const Joi = require("joi");
 
 const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -15,7 +19,40 @@ const loginValidationSchema = Joi.object().keys({
   password: createUserValidationSchema.extract("password"),
 });
 
+const updateSubscriptionSchema = Joi.object({
+  subscription: Joi.boolean()
+    .valid("starter", "pro", "business")
+    .required()
+    .messages({
+      "any.required": "Subscription is a required field",
+    }),
+});
+
+const authControll = async (req, res, next) => {
+  const { authorization = "" } = req.headers;
+  const [bearer, token] = authorization.split(" ");
+  if (bearer !== "Bearer") {
+    next(new HttpError(401, "Not authorized"));
+  }
+
+  try {
+    const { id } = jwt.verify(token, SECRET_KEY);
+
+    const user = await User.findById(id);
+
+    if (user === null || user.token === null || user.token !== token) {
+      next(new HttpError(401, "Not authorized"));
+    }
+    req.user = user;
+    next();
+  } catch (error) {
+    next(new HttpError(401, "Not authorized"));
+  }
+};
+
 module.exports = {
   createUserValidationSchema,
   loginValidationSchema,
+  authControll,
+  updateSubscriptionSchema,
 };
