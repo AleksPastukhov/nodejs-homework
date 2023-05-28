@@ -32,7 +32,7 @@ const authControll = async (req, res, next) => {
   const { authorization = "" } = req.headers;
   const [bearer, token] = authorization.split(" ");
   if (bearer !== "Bearer") {
-    next(new HttpError(401, "Not authorized"));
+    return next(new HttpError(401, "Not authorized"));
   }
 
   try {
@@ -41,7 +41,7 @@ const authControll = async (req, res, next) => {
     const user = await User.findById(id);
 
     if (user === null || user.token === null || user.token !== token) {
-      next(new HttpError(401, "Not authorized"));
+      return next(new HttpError(401, "Not authorized"));
     }
     req.user = user;
     next();
