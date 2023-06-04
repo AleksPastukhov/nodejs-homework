@@ -1,7 +1,8 @@
 const { Schema, model } = require("mongoose");
+const handleMongooseSchemaError = require("../utils/handleMongooseSchemaErr");
 const bcrypt = require("bcryptjs");
 
-const schema = new Schema({
+const userSchema = new Schema({
   email: {
     type: String,
     required: [true, "Email is required"],
@@ -15,18 +16,21 @@ const schema = new Schema({
     enum: ["starter", "pro", "business"],
     default: "starter",
   },
+  avatarURL: String,
   token: String,
   refresh_token: String,
 });
 
-schema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
   this.password = await bcrypt.hash(this.password, 12);
 });
 
-const User = model("user", schema);
+userSchema.post("save", handleMongooseSchemaError);
+
+const User = model("user", userSchema);
 
 module.exports = {
   User,

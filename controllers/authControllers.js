@@ -4,6 +4,7 @@ const {
   loginService,
   logoutService,
   changeUserSubscription,
+  updateAvatarService,
 } = require("../services/authServices");
 
 const signup = catchAsyncWrapper(async (req, res, next) => {
@@ -37,10 +38,21 @@ const updateUserSubscriprion = catchAsyncWrapper(async (req, res, next) => {
   });
 });
 
+const updateAvatar = catchAsyncWrapper(async (req, res, next) => {
+  const { id } = req.user;
+
+  const updatedUser = await updateAvatarService(id, req.file);
+
+  res.status(200).json({
+    avatarURL: updatedUser.avatarURL,
+  });
+});
+
 module.exports = {
   signup,
   login,
   logout,
   getUser,
   updateUserSubscriprion,
+  updateAvatar,
 };
