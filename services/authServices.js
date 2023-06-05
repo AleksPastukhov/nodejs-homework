@@ -4,6 +4,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = process.env;
 
+const path = require("path");
+const fs = require("fs/promises");
+const Jimp = require("jimp");
+
+const avatarDir = path.join(__dirname, "../", "public", "avatars");
+
 const signupService = async (body) => {
   const currentUser = await User.findOne({ email: body.email });
   if (currentUser) {
@@ -55,9 +61,26 @@ const changeUserSubscription = async (req) => {
   return User.findByIdAndUpdate(user._id, { subscription }, { new: true });
 };
 
+const updateAvatarService = async (userId, file) => {
+  const { path: tmpUpload, originalname } = file;
+  const extension = originalname.split(".").pop();
+
+  const image = await Jimp.read(`tmp/${originalname}`);
+  image.resize(250, 250);
+
+  const filename = `${userId}.${extension}`;
+  const uploadFullPath = path.join(avatarDir, filename);
+
+  fs.rename(tmpUpload, uploadFullPath);
+  const avatarURL = path.join("avatars", filename);
+
+  return User.findByIdAndUpdate(userId, { avatarURL }, { new: true });
+};
+
 module.exports = {
   signupService,
   loginService,
   logoutService,
   changeUserSubscription,
+  updateAvatarService,
 };
