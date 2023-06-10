@@ -23,7 +23,7 @@ const signupService = async (body) => {
   const verifyEmail = {
     to: body.email,
     subject: "Email verification from Contacts",
-    html: `<strong>Please verify your email by clicking this <a target="_blank" href="${PUBLIC_URL}auth/verify/${verificationToken}">verification link</a></strong>`,
+    html: `<strong>Please verify your email by clicking this <a target="_blank" href="${LOCAL_URL}auth/verify/${verificationToken}">verification link</a></strong>`,
   };
   await sendEmail(verifyEmail);
 
@@ -122,7 +122,7 @@ const resentVerifyEmailService = async (email) => {
   const verifyEmail = {
     to: user.email,
     subject: "Email verification from Contacts",
-    html: `<strong>Please verify your email by clicking this <a target="_blank" href="${PUBLIC_URL}auth/verify/${user.verificationToken}">verification link</a></strong>`,
+    html: `<strong>Please verify your email by clicking this <a target="_blank" href="${LOCAL_URL}auth/verify/${user.verificationToken}">verification link</a></strong>`,
   };
 
   await sendEmail(verifyEmail);
