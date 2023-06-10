@@ -3,6 +3,7 @@ const {
   createUserValidationSchema,
   loginValidationSchema,
   updateSubscriptionSchema,
+  verifyEmailSchema,
   authControll,
 } = require("../../utils/validation/authValidationSchema");
 const { validateBody } = require("../../utils/validateBody");
@@ -13,6 +14,8 @@ const {
   getUser,
   updateUserSubscriprion,
   updateAvatar,
+  verifyEmail,
+  resentVerifyEmail,
 } = require("../../controllers/authControllers");
 const upload = require("../../middlewares/upload");
 
@@ -31,6 +34,14 @@ router
   );
 
 router.patch("/avatars", authControll, upload.single("avatar"), updateAvatar);
+
+router.get("/verify/:verificationToken", verifyEmail);
+
+router.post(
+  "/verify",
+  validateBody(verifyEmailSchema),
+  resentVerifyEmail
+);
 
 module.exports = {
   authRouter: router,

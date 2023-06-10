@@ -50,9 +50,14 @@ const authControll = async (req, res, next) => {
   }
 };
 
+const verifyEmailSchema = Joi.object({
+  email: createUserValidationSchema.extract("email"),
+});
+
 module.exports = {
   createUserValidationSchema,
   loginValidationSchema,
   authControll,
   updateSubscriptionSchema,
+  verifyEmailSchema,
 };
