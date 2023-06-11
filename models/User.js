@@ -2,7 +2,8 @@ const { Schema, model } = require("mongoose");
 const handleMongooseSchemaError = require("../utils/handleMongooseSchemaErr");
 const bcrypt = require("bcryptjs");
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
   email: {
     type: String,
     required: [true, "Email is required"],
@@ -16,10 +17,20 @@ const userSchema = new Schema({
     enum: ["starter", "pro", "business"],
     default: "starter",
   },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, 'Verify token is required'],
+  },
   avatarURL: String,
   token: String,
   refresh_token: String,
-});
+},
+{ versionKey: false, timestamps: true }
+)
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {

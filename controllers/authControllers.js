@@ -5,16 +5,31 @@ const {
   logoutService,
   changeUserSubscription,
   updateAvatarService,
+  verifyEmailService,
+  resentVerifyEmailService,
 } = require("../services/authServices");
 
 const signup = catchAsyncWrapper(async (req, res, next) => {
   const newUser = await signupService(req.body);
-  res.status(201).json(newUser);
+  res.status(201).json({
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+      avatarURL: newUser.avatarURL,
+      verificationToken: newUser.verificationToken,
+    },
+  });
 });
 
 const login = catchAsyncWrapper(async (req, res, next) => {
-  const currentUser = await loginService(req.body);
-  res.status(200).json(currentUser);
+  const {user, token} = await loginService(req.body);
+  res.status(200).json({
+    token,
+    user: {
+      email: user.email,
+      subscription: user.subscription,
+    },
+  });
 });
 
 const logout = catchAsyncWrapper(async (req, res, next) => {
@@ -48,6 +63,22 @@ const updateAvatar = catchAsyncWrapper(async (req, res, next) => {
   });
 });
 
+const verifyEmail = catchAsyncWrapper(async (req, res, next) => {
+  const { verificationToken } = req.params;
+
+  await verifyEmailService(verificationToken);
+
+  res.status(200).json({ message: "Verification successful" });
+});
+
+const resentVerifyEmail = catchAsyncWrapper(async (req, res, next) => {
+  const { email } = req.body;
+
+  await resentVerifyEmailService(email);
+
+  res.status(200).json({ message: "Verification email sent" });
+});
+
 module.exports = {
   signup,
   login,
@@ -55,4 +86,6 @@ module.exports = {
   getUser,
   updateUserSubscriprion,
   updateAvatar,
+  verifyEmail,
+  resentVerifyEmail,
 };
