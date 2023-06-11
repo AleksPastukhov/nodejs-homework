@@ -11,7 +11,7 @@ COPY . .
 EXPOSE 3000
 
 
-CMD ["yarn", "start:dev"]
+CMD ["yarn", "start"]
 
 # to build image - make build
 # to start - make run-dev
